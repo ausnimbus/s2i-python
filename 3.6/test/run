@@ -9,7 +9,8 @@
 IMAGE_NAME=${IMAGE_NAME:-ausnimbus/s2i-python:3.6}
 S2I_ARGS=${S2I_ARGS:-""}
 
-declare -a WEB_APPS=({standalone,setup,django,numpy,app-home,uwsgi,locale,mod-wsgi}-test-app)
+#declare -a WEB_APPS=({standalone,setup,django,numpy,app-home,uwsgi,locale,mod-wsgi}-test-app)
+declare -a WEB_APPS=({standalone,setup,django,numpy,app-home,uwsgi,locale}-test-app)
 
 # TODO: Make command compatible for Mac users
 test_dir="$(readlink -zf $(dirname "${BASH_SOURCE[0]}"))"
