@@ -24,7 +24,7 @@ do
 
     docker build -t $image $version/
     docker save $image | sudo /usr/local/bin/docker-squash | docker load
-    IMAGE_NAME=$image ./$version/test/run
+#    IMAGE_NAME=$image ./$version/test/run
     docker push $image
   fi
 done
