@@ -15,5 +15,5 @@ If you are interested in using SCL-based Python binaries, use [s2i-python-scl](h
 
 The versions currently supported are:
 
-- 2.7
-- 3.6
+- 2.7.13
+- 3.6.1
