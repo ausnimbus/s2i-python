@@ -19,6 +19,7 @@ RUN apk add --update bash git && rm -rf /var/cache/apk/* && \
 COPY bin/ /usr/bin/
 
 ENV PATH=$HOME/.local/bin/:$PATH \
+    PYTHONUNBUFFERED=1 \
     PYTHONIOENCODING=UTF-8 \
     LC_ALL=en_US.UTF-8 \
     LANG=en_US.UTF-8 \
