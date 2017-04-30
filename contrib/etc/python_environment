@@ -1,0 +1,34 @@
+#!/bin/bash
+source /opt/app-root/bin/activate
+
+function should_collectstatic() {
+  is_django_installed && [[ -z "$DISABLE_COLLECTSTATIC" ]]
+}
+
+function is_gunicorn_installed() {
+  hash gunicorn &>/dev/null
+}
+
+function is_django_installed() {
+  python -c "import django" &>/dev/null
+}
+
+function should_migrate() {
+  is_django_installed && [[ -z "$DISABLE_MIGRATE" ]]
+}
+
+# Guess the number of workers according to the number of cores
+function get_default_web_concurrency() {
+  source cgroup-limits
+  if [ -z "${NUMBER_OF_CORES:-}" ]; then
+    echo 1
+    return
+  fi
+
+  local max=$((NUMBER_OF_CORES*2))
+  # Require at least 43 MiB and additional 10 MiB for every worker
+  local default=$(((${MEMORY_LIMIT_IN_BYTES:-MAX_MEMORY_LIMIT_IN_BYTES}/1024/1024 - 43) / 10))
+  default=$((default > max ? max : default))
+  default=$((default < 1 ? 1 : default))
+  echo $default
+}
