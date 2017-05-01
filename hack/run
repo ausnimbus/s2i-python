@@ -3,6 +3,7 @@
 NAME="python"
 DISPLAY_NAME="Python"
 REPO="ausnimbus/s2i-python"
+TEMPLATES="pre,s2i,post"
 VARIANT="alpine"
 VERSIONS="2.7,3.6"
 
