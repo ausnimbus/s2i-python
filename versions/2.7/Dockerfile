@@ -40,6 +40,39 @@ LABEL io.openshift.expose-services="8080:http" \
 COPY ./s2i/bin/ $STI_SCRIPTS_PATH
 
 # </s2i>
+# <template>
+
+ENV PATH=$HOME/.local/bin/:$PATH \
+    PYTHONUNBUFFERED=1 \
+    PYTHONIOENCODING=UTF-8 \
+    LC_ALL=en_US.UTF-8 \
+    LANG=en_US.UTF-8 \
+    PIP_NO_CACHE_DIR=off \
+    LIBRARY_PATH=/lib:/usr/lib
+
+RUN apk add --no-cache \
+      build-base \
+      libxml2-dev \
+      libxslt-dev \
+      postgresql-dev \
+      mariadb-dev \
+      linux-headers \
+      libtool \
+      libffi-dev \
+      apache2 \
+      apache2-dev && \
+    rm -rf /tmp/* && \
+    rm -rf /var/cache/apk/* && \
+    # Fix numpy
+    ln -s /usr/include/locale.h /usr/include/xlocale.h
+
+# Create a Python virtual environment for use by any application to avoid
+# potential conflicts with Python packages preinstalled in the main Python
+# installation.
+RUN pip install virtualenv && \
+    virtualenv /opt/app-root
+
+# </template>
 # <post>
 
 # Each container image can have 'contrib' a directory with extra files needed to
