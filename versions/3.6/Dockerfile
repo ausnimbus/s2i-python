@@ -25,6 +25,10 @@ RUN apk --no-cache add bash rsync git && rm -rf /var/cache/apk/* && \
 # Copy common executable utilities.
 COPY ./common/bin/ /usr/bin/
 
+# Each container image can have 'contrib' a directory with extra files needed to
+# run and build the application.
+COPY ./contrib/ /opt/app-root
+
 # </pre>
 # <s2i>
 
@@ -74,10 +78,6 @@ RUN pip install virtualenv && \
 
 # </template>
 # <post>
-
-# Each container image can have 'contrib' a directory with extra files needed to
-# run and build the application.
-COPY ./contrib/ /opt/app-root
 
 # Directory with the sources is set as the working directory so all STI scripts
 # can execute relative to this path.
