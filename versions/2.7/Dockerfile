@@ -43,6 +43,12 @@ LABEL io.openshift.expose-services="8080:http" \
 # Copy the S2I scripts from the specific language image to $STI_SCRIPTS_PATH
 COPY ./s2i/bin/ $STI_SCRIPTS_PATH
 
+# Directory with the sources is set as the working directory so all S2I scripts
+# can execute relative to this path.
+WORKDIR ${HOME}
+
+CMD /usr/bin/base-usage
+
 # </s2i>
 # <template>
 
@@ -79,15 +85,10 @@ RUN pip install virtualenv && \
 # </template>
 # <post>
 
-# Directory with the sources is set as the working directory so all STI scripts
-# can execute relative to this path.
-WORKDIR ${HOME}
-
 # Drop the root user and make the content of /opt/app-root owned by user 1001
 RUN chown -R 1001:0 /opt/app-root && chmod -R ug+rwx /opt/app-root
 USER 1001
 
-CMD /usr/bin/base-usage
 ENTRYPOINT ["container-entrypoint"]
 
 # </post>
