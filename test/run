@@ -13,8 +13,9 @@ S2I_ARGS=${S2I_ARGS:-""}
 #TEST_APPS=({mod-wsgi,standalone,setup,django,numpy,app-home,uwsgi,locale})
 TEST_APPS=({standalone,setup,django,numpy,app-home,uwsgi,locale})
 VERSION_COMMAND="python --version"
+
 extra_tests() {
-  echo "No extra tests"
+  echo ""
 }
 
 test_dir="$(readlink -zf $(dirname "${BASH_SOURCE[0]}"))"

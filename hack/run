@@ -1,23 +1,11 @@
-#!/bin/bash -e
+#!/bin/bash
 
 NAME="python"
 DISPLAY_NAME="Python"
-REPO="ausnimbus/s2i-python"
-TEMPLATES="pre,s2i,template,post"
+TYPE="s2i"
 VARIANT="alpine"
 VERSIONS="2.7,3.6"
 
 DOCKER_PUSH=${DOCKER_PUSH:-"false"}
 
-if [ $# -ne 1 ]; then
-    echo "Usage: ./hack/run [build,update]"
-    exit
-fi
-
-if [ "$1" == "build" ]; then
-  source $(readlink -zf $(dirname "${BASH_SOURCE[0]}"))/../common/hack/run
-fi
-
-if [ "$1" == "update" ]; then
-  source $(readlink -zf $(dirname "${BASH_SOURCE[0]}"))/../common/hack/update
-fi
+source $(readlink -zf $(dirname "${BASH_SOURCE[0]}"))/../common/hack/run
