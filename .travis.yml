@@ -10,8 +10,8 @@ before_install:
   hack/build-go.sh
   popd
 script:
-- if [ "$TRAVIS_BRANCH" = "master" ]; then DOCKER_PUSH=true && docker login -u="$DOCKER_USER" -p="$DOCKER_PASS" quay.io; fi
-- . hack/run build
+- if [ "$TRAVIS_BRANCH" = "master" ]; then export DOCKER_PUSH=true && docker login -u="$DOCKER_USER" -p="$DOCKER_PASS" quay.io; fi
+- ./hack/run build
 notifications:
   slack:
     secure: fBgNfe/AgfQgx4Lt5Io8506YnBXSLKIsAJY+zrQsgKl7Ldw62rX0RVO379m/wlA0O+i+35XBrilFWcWFTECtOk8poUI2r2oZCF9VA6wuLm2ezKkXNm0bgmpIctw3onfno+zlkfGXRoa0lMqDNQuWEW/+3L4LnGGw4NgzPDx52bYi2KrvGYfX0Z0yo+CQqnaLJvLMRw5zdgw1kd3SK4Orz9bnT2cy27UizHo881chwUbO/ryRfEfqH1wMlcyqx+g1tRaLOr3b7KZL8DjjtzmlrZTQhuVY7BfFagHwr41H0XjA5nkO3wgctl+MriK97i8DsfsE/VoGYhKumEasQl625RuACywXINylwjC/28XV4So+O1yop3dGNOZ6eKFHriliApxN82BTwemJbxgVHPuvmtWh13hcwC4YmgkoYWFrSLVC4HV/dQpozYiTl5T2PCDxuFA3UUkW4KEqlognOCkLjpLtLAzzHIRILmZ2Mzc2YjA8hLSkdbfgCzsecE0gVFZgoYjyOFBpTYLgmi6NDrEVJCxomeuR8JO5naLyKpDCOLN8HvUHwI0s3HY8TlDBmDeS1eKftsNv06muxLDOA9BBFsnoTHT7ALXi1PsDY0UkmR/GhJ/6eLAWvtXZdladDZZoS0RfKu4cksMqRXNerXlgOmtsBpZBAFubHgc/9Tk0VSY=
