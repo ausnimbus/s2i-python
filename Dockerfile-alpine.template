@@ -17,14 +17,15 @@ RUN apk add --no-cache \
       # Needed by scipy/numpy
       gfortran \
       freetype-dev \
-      lapack-dev \
       libquadmath \
       # Needed by pylibmc
       memcached-dev \
       libsasl \
       # Apache for mod_wsgi
       apache2 \
-      apache2-dev
+      apache2-dev && \
+      apk add --no-cache --repository http://rsync.alpinelinux.org/alpine/latest-stable/community/ \
+      lapack-dev
 
 ENV PATH=$HOME/.local/bin/:$PATH \
     PYTHONUNBUFFERED=1 \
