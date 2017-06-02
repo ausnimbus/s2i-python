@@ -5,7 +5,7 @@ RUN apk add --no-cache \
       build-base \
       openssl-dev \
       libffi-dev \
-      libjpeg-dev \
+      jpeg-dev \
       mariadb-dev \
       libpng-dev \
       postgresql-dev \
