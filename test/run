@@ -17,7 +17,7 @@ else
   TEST_APPS=({mod-wsgi,standalone,setup,django,numpy,app-home,uwsgi,locale})
 fi
 
-VERSION_COMMAND="python -c 'import sys; print(sys.version)'"
+VERSION_COMMAND='env'
 
 extra_tests() {
   echo ""
