@@ -4,11 +4,24 @@
 * DO NOT EDIT IT DIRECTLY.
 */
 node {
-        def versions = "2.7,3.6".split(',');
-        for (int i = 0; i < versions.length; i++) {
-                try {
-                        stage("Build (Python ${versions[i]})") {
-                                openshift.withCluster() {
+        def variants = "default,alpine".split(',');
+        for (int v = 0; v < variants.length; v++) {
+
+                def versions = "2.7,3.6".split(',');
+                for (int i = 0; i < versions.length; i++) {
+
+                  if (variants[v] == "default") {
+                    variant = ""
+                    tag = versions[i]
+                  } else {
+                    variant = variants[v]
+                    tag = versions[i] + "-" + variant
+                  }
+
+
+                        try {
+                                stage("Build (Python-${tag})") {
+                                        openshift.withCluster() {
         openshift.apply([
                                 "apiVersion" : "v1",
                                 "items" : [
@@ -24,10 +37,10 @@ node {
                                                 "spec" : [
                                                         "tags" : [
                                                                 [
-                                                                        "name" : "${versions[i]}-alpine",
+                                                                        "name" : "${tag}",
                                                                         "from" : [
                                                                                 "kind" : "DockerImage",
-                                                                                "name" : "python:${versions[i]}-alpine",
+                                                                                "name" : "python:${tag}",
                                                                         ],
                                                                         "referencePolicy" : [
                                                                                 "type" : "Source"
@@ -53,7 +66,7 @@ node {
                                 "apiVersion" : "v1",
                                 "kind" : "BuildConfig",
                                 "metadata" : [
-                                        "name" : "s2i-python-${versions[i]}",
+                                        "name" : "s2i-python-${tag}",
                                         "labels" : [
                                                 "builder" : "s2i-python"
                                         ]
@@ -62,7 +75,7 @@ node {
                                         "output" : [
                                                 "to" : [
                                                         "kind" : "ImageStreamTag",
-                                                        "name" : "s2i-python:${versions[i]}"
+                                                        "name" : "s2i-python:${tag}"
                                                 ]
                                         ],
                                         "runPolicy" : "Serial",
@@ -79,27 +92,27 @@ node {
                                         ],
                                         "strategy" : [
                                                 "dockerStrategy" : [
-                                                        "dockerfilePath" : "versions/${versions[i]}/Dockerfile",
+                                                        "dockerfilePath" : "versions/${versions[i]}/${variant}/Dockerfile",
                                                         "from" : [
                                                                 "kind" : "ImageStreamTag",
-                                                                "name" : "python:${versions[i]}-alpine"
+                                                                "name" : "python:${tag}"
                                                         ]
                                                 ],
                                                 "type" : "Docker"
                                         ]
                                 ]
                         ])
-        echo "Created s2i-python:${versions[i]} objects"
+        echo "Created s2i-python:${tag} objects"
         /**
         * TODO: Replace the sleep with import-image
-        * openshift.importImage("python:${versions[i]}-alpine")
+        * openshift.importImage("python:${tag}")
         */
         sleep 60
 
         echo "==============================="
-        echo "Starting build s2i-python-${versions[i]}"
+        echo "Starting build s2i-python-${tag}"
         echo "==============================="
-        def builds = openshift.startBuild("s2i-python-${versions[i]}");
+        def builds = openshift.startBuild("s2i-python-${tag}");
 
         timeout(10) {
                 builds.untilEach(1) {
@@ -109,14 +122,14 @@ node {
         echo "Finished build ${builds.names()}"
 }
 
-                        }
-                        stage("Test (Python ${versions[i]})") {
-                                openshift.withCluster() {
+                                }
+                                stage("Test (Python-${tag})") {
+                                        openshift.withCluster() {
         echo "==============================="
         echo "Starting test application"
         echo "==============================="
 
-        def testApp = openshift.newApp("https://github.com/ausnimbus/python-ex", "--image-stream=s2i-python:${versions[i]}", "-l app=python-ex");
+        def testApp = openshift.newApp("https://github.com/ausnimbus/python-ex", "--image-stream=s2i-python:${tag}", "-l app=python-ex");
         echo "new-app created ${testApp.count()} objects named: ${testApp.names()}"
         testApp.describe()
 
@@ -148,28 +161,29 @@ node {
         sh "curl -o /dev/null $testAppHost:$testAppPort"
 }
 
-                        }
-                        stage("Stage (Python ${versions[i]})") {
-                                openshift.withCluster() {
+                                }
+                                stage("Stage (Python-${tag})") {
+                                        openshift.withCluster() {
         echo "==============================="
         echo "Tag new image into staging"
         echo "==============================="
 
-        openshift.tag("ausnimbus-ci/s2i-python:${versions[i]}", "ausnimbus/s2i-python:${versions[i]}")
+        openshift.tag("ausnimbus-ci/s2i-python:${tag}", "ausnimbus/s2i-python:${tag}")
 }
 
+                                }
+                        } finally {
+                                openshift.withCluster() {
+                                        echo "Deleting test resources python-ex"
+                                        openshift.selector("dc", [app: "python-ex"]).delete()
+                                        openshift.selector("bc", [app: "python-ex"]).delete()
+                                        openshift.selector("svc", [app: "python-ex"]).delete()
+                                        openshift.selector("is", [app: "python-ex"]).delete()
+                                        openshift.selector("pods", [app: "python-ex"]).delete()
+                                        openshift.selector("routes", [app: "python-ex"]).delete()
+                                }
                         }
-                } finally {
-                        openshift.withCluster() {
-                                echo "Deleting test resources python-ex"
-                                openshift.selector("dc", [app: "python-ex"]).delete()
-                                openshift.selector("bc", [app: "python-ex"]).delete()
-                                openshift.selector("svc", [app: "python-ex"]).delete()
-                                openshift.selector("is", [app: "python-ex"]).delete()
-                                openshift.selector("pods", [app: "python-ex"]).delete()
-                                openshift.selector("routes", [app: "python-ex"]).delete()
-                        }
-                }
 
+                }
         }
 }

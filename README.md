@@ -7,10 +7,6 @@ This repository contains the source for the [source-to-image](https://github.com
 builders used to deploy [Python applications](https://www.ausnimbus.com.au/languages/python/)
 on [AusNimbus](https://www.ausnimbus.com.au/).
 
-The builders are built using Python binaries from python.org
-
-If you are interested in using SCL-based Python binaries, use [s2i-python-scl](https://github.com/ausnimbus/s2i-python-scl)
-
 ## Environment variables
 ---------------------
 
@@ -97,11 +93,9 @@ The versions currently supported are:
 
 mod_wsgi is currently not supported
 
-## Hacking
+## Variants
 
-`hack/run build` will build and test all images
-`hack/run update` will update all Dockerfiles
+Two different variants are made available:
 
-`docker-squash` is used to to squash the final image:
-
-`pip install docker-squash`
+- Default
+- Alpine
