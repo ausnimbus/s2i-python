@@ -3,7 +3,7 @@
 #
 # DO NOT EDIT IT DIRECTLY.
 #
-FROM python:2.7-alpine
+FROM python:2.7
 # <pre>
 
 MAINTAINER AusNimbus <support@ausnimbus.com.au>
@@ -13,15 +13,16 @@ LABEL summary="Platform for running Python 2.7 applications" \
       io.k8s.description="Platform for running Python 2.7 applications" \
       io.k8s.display-name="Python 2.7"
 
-ENV HOME=/opt/app-root/src
+ENV USER=999 \
+    HOME=/opt/app-root/src
 
 USER 0
 
-RUN apk --no-cache add bash rsync && \
-    mkdir -p ${HOME}/.pki/nssdb && \
-    chown -R 1001:0 ${HOME}/.pki && \
-    adduser -S -u 1001 -G root -h ${HOME} -s /sbin/nologin \
-      -g "Default Application User" default && \
+RUN apt-get update && apt-get install -y \
+      rsync nano vim && \
+    mkdir -p $HOME && \
+    useradd -u 1001 -g 0 -d ${HOME} -s /sbin/nologin \
+      -c "Default Application User" default && \
     chown -R 1001:0 /opt/app-root
 
 # Copy common executable utilities.
@@ -34,7 +35,7 @@ COPY ./contrib/ /opt/app-root
 # </pre>
 # <s2i>
 
-RUN apk --no-cache add git && rm -rf /var/cache/apk/*
+RUN apt-get install -y git
 
 ENV STI_SCRIPTS_PATH=/usr/libexec/s2i
 
@@ -55,6 +56,41 @@ CMD /usr/bin/base-usage
 # </s2i>
 # <template>
 
+RUN apt-get update && apt-get install -yq \
+      wget \
+      locales \
+      # Dependenies for third-party Python packages
+      # with C-extensions
+      build-essential \
+      libcurl4-openssl-dev \
+      libffi-dev \
+      libjpeg-dev \
+      libmysqlclient-dev \
+      libpng12-dev \
+      libpq-dev \
+      libssl-dev \
+      libxml2-dev \
+      libxslt1-dev \
+      swig \
+      zlib1g-dev \
+      # Needed by scipy/numpy
+      gfortran \
+      libatlas-dev \
+      libblas-dev \
+      libfreetype6-dev \
+      liblapack-dev \
+      libquadmath0 \
+      # Needed by pylibmc
+      libmemcached-dev \
+      libsasl2-2 \
+      libsasl2-dev \
+      libsasl2-modules \
+      sasl2-bin \
+      # Apache for mod_wsgi
+      apache2 \
+      apache2-dev && \
+    rm -rf /var/lib/apt/lists/*
+
 ENV PATH=$HOME/.local/bin/:$PATH \
     PYTHONUNBUFFERED=1 \
     PYTHONIOENCODING=UTF-8 \
@@ -63,21 +99,8 @@ ENV PATH=$HOME/.local/bin/:$PATH \
     PIP_NO_CACHE_DIR=off \
     LIBRARY_PATH=/lib:/usr/lib
 
-RUN apk add --no-cache \
-      build-base \
-      libxml2-dev \
-      libxslt-dev \
-      postgresql-dev \
-      mariadb-dev \
-      linux-headers \
-      libtool \
-      libffi-dev \
-      apache2 \
-      apache2-dev && \
-    rm -rf /tmp/* && \
-    rm -rf /var/cache/apk/* && \
-    # Fix numpy
-    ln -s /usr/include/locale.h /usr/include/xlocale.h
+# Fix locale
+RUN localedef -i en_US -f UTF-8 en_US.UTF-8
 
 # Create a Python virtual environment for use by any application to avoid
 # potential conflicts with Python packages preinstalled in the main Python
@@ -88,14 +111,12 @@ RUN pip install virtualenv && \
 # </template>
 # <post>
 
-# Standardize on UID 100 (alpine:3.4 does not have the shadow package)
-RUN apk add shadow --no-cache --repository http://rsync.alpinelinux.org/alpine/latest-stable/community/ && \
-    usermod -o -u 100 default && \
-    apk del shadow
+# Standardize on UID $USER
+RUN usermod -o -u $USER default
 
 # Drop the root user and make the content of /opt/app-root owned by user default
-RUN chown -R 100:0 /opt/app-root && chmod -R ug+rwx /opt/app-root
-USER 100
+RUN chown -R $USER:0 /opt/app-root && chmod -R ug+rwx /opt/app-root
+USER $USER
 
 ENTRYPOINT ["container-entrypoint"]
 

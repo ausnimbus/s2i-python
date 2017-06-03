@@ -10,9 +10,19 @@ IMAGE_NAME=${IMAGE_NAME-ausnimbus/s2i-python:3.6}
 VERSION=${VERSION-"3.6"}
 S2I_ARGS=${S2I_ARGS:-""}
 
-#TEST_APPS=({mod-wsgi,standalone,setup,django,numpy,app-home,uwsgi,locale})
-TEST_APPS=({standalone,setup,django,numpy,app-home,uwsgi,locale})
-VERSION_COMMAND="python --version"
+# mod_wsgi does not work on alpine
+if [ $VARIANT == "alpine" ]; then
+  # uwsgi does not work on alpine 2.7
+  if [ $VERSION == "2.7" ]; then
+    TEST_APPS=({standalone,setup,django,numpy,app-home,locale})
+  else
+    TEST_APPS=({standalone,setup,django,numpy,app-home,uwsgi,locale})
+  fi
+else
+  TEST_APPS=({standalone,setup,django,numpy,app-home,uwsgi,locale,mod-wsgi})
+fi
+
+VERSION_COMMAND='env'
 
 extra_tests() {
   echo ""

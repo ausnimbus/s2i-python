@@ -1,10 +1,10 @@
-#!/bin/bash
+#!/bin/bash -e
 
 NAME="python"
 DISPLAY_NAME="Python"
 TYPE="s2i"
-VARIANT="alpine"
-VERSIONS="2.7,3.6"
+VARIANTS=${VARIANTS:-"default,alpine"}
+VERSIONS=${VERSIONS:-"2.7,3.6"}
 
 DOCKER_PUSH=${DOCKER_PUSH:-"false"}
 

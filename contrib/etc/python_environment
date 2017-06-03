@@ -1,4 +1,16 @@
 #!/bin/bash
+source cgroup-limits
+
+set -e
+set -o pipefail
+# Include hidden files
+shopt -s dotglob
+
+# Set the umask to be '002' so that any files/directories created from
+# this point are group writable.
+umask 002
+
+# virtualenv
 source /opt/app-root/bin/activate
 
 function should_collectstatic() {

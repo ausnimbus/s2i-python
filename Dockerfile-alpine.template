@@ -1,37 +1,36 @@
-RUN apt-get update && apt-get install -yq \
+RUN apk add --no-cache \
       wget \
-      locales \
+      libtool \
+      libc-dev \
+      linux-headers \
       # Dependenies for third-party Python packages
       # with C-extensions
-      build-essential \
-      libcurl4-openssl-dev \
+      build-base \
+      openssl-dev \
       libffi-dev \
-      libjpeg-dev \
-      libmysqlclient-dev \
-      libpng12-dev \
-      libpq-dev \
-      libssl-dev \
+      jpeg-dev \
+      mariadb-dev \
+      libpng-dev \
+      postgresql-dev \
+      openssl-dev \
       libxml2-dev \
-      libxslt1-dev \
+      libxslt-dev \
       swig \
-      zlib1g-dev \
+      zlib-dev \
       # Needed by scipy/numpy
       gfortran \
-      libatlas-dev \
-      libblas-dev \
-      libfreetype6-dev \
-      liblapack-dev \
-      libquadmath0 \
+      freetype-dev \
+      libquadmath \
       # Needed by pylibmc
-      libmemcached-dev \
-      libsasl2-2 \
-      libsasl2-dev \
-      libsasl2-modules \
-      sasl2-bin \
+      memcached-dev \
+      libsasl \
       # Apache for mod_wsgi
       apache2 \
       apache2-dev && \
-    rm -rf /var/lib/apt/lists/*
+      apk add --no-cache --repository http://rsync.alpinelinux.org/alpine/latest-stable/community/ \
+      lapack-dev && \
+      # Fix numpy
+      ln -s /usr/include/locale.h /usr/include/xlocale.h
 
 ENV PATH=$HOME/.local/bin/:$PATH \
     PYTHONUNBUFFERED=1 \
@@ -40,9 +39,6 @@ ENV PATH=$HOME/.local/bin/:$PATH \
     LANG=en_US.UTF-8 \
     PIP_NO_CACHE_DIR=off \
     LIBRARY_PATH=/lib:/usr/lib
-
-# Fix locale
-RUN localedef -i en_US -f UTF-8 en_US.UTF-8
 
 # Create a Python virtual environment for use by any application to avoid
 # potential conflicts with Python packages preinstalled in the main Python

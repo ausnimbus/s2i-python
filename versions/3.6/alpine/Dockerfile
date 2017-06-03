@@ -3,7 +3,7 @@
 #
 # DO NOT EDIT IT DIRECTLY.
 #
-FROM python:3.6
+FROM python:3.6-alpine
 # <pre>
 
 MAINTAINER AusNimbus <support@ausnimbus.com.au>
@@ -13,16 +13,16 @@ LABEL summary="Platform for running Python 3.6 applications" \
       io.k8s.description="Platform for running Python 3.6 applications" \
       io.k8s.display-name="Python 3.6"
 
-ENV USER=999 \
+ENV USER=100 \
     HOME=/opt/app-root/src
 
 USER 0
 
-RUN apt-get update && apt-get install -y \
-      rsync nano vim && \
-    mkdir -p $HOME && \
-    useradd -u 1001 -g 0 -d ${HOME} -s /sbin/nologin \
-      -c "Default Application User" default && \
+RUN apk --no-cache add bash rsync && \
+    mkdir -p ${HOME}/.pki/nssdb && \
+    chown -R 1001:0 ${HOME}/.pki && \
+    adduser -S -u 1001 -G root -h ${HOME} -s /sbin/nologin \
+      -g "Default Application User" default && \
     chown -R 1001:0 /opt/app-root
 
 # Copy common executable utilities.
@@ -35,7 +35,7 @@ COPY ./contrib/ /opt/app-root
 # </pre>
 # <s2i>
 
-RUN apt-get install -y git
+RUN apk --no-cache add git && rm -rf /var/cache/apk/*
 
 ENV STI_SCRIPTS_PATH=/usr/libexec/s2i
 
@@ -56,40 +56,39 @@ CMD /usr/bin/base-usage
 # </s2i>
 # <template>
 
-RUN apt-get update && apt-get install -yq \
+RUN apk add --no-cache \
       wget \
-      locales \
+      libtool \
+      libc-dev \
+      linux-headers \
       # Dependenies for third-party Python packages
       # with C-extensions
-      build-essential \
-      libcurl4-openssl-dev \
+      build-base \
+      openssl-dev \
       libffi-dev \
-      libjpeg-dev \
-      libmysqlclient-dev \
-      libpng12-dev \
-      libpq-dev \
-      libssl-dev \
+      jpeg-dev \
+      mariadb-dev \
+      libpng-dev \
+      postgresql-dev \
+      openssl-dev \
       libxml2-dev \
-      libxslt1-dev \
+      libxslt-dev \
       swig \
-      zlib1g-dev \
+      zlib-dev \
       # Needed by scipy/numpy
       gfortran \
-      libatlas-dev \
-      libblas-dev \
-      libfreetype6-dev \
-      liblapack-dev \
-      libquadmath0 \
+      freetype-dev \
+      libquadmath \
       # Needed by pylibmc
-      libmemcached-dev \
-      libsasl2-2 \
-      libsasl2-dev \
-      libsasl2-modules \
-      sasl2-bin \
+      memcached-dev \
+      libsasl \
       # Apache for mod_wsgi
       apache2 \
       apache2-dev && \
-    rm -rf /var/lib/apt/lists/*
+      apk add --no-cache --repository http://rsync.alpinelinux.org/alpine/latest-stable/community/ \
+      lapack-dev && \
+      # Fix numpy
+      ln -s /usr/include/locale.h /usr/include/xlocale.h
 
 ENV PATH=$HOME/.local/bin/:$PATH \
     PYTHONUNBUFFERED=1 \
@@ -98,9 +97,6 @@ ENV PATH=$HOME/.local/bin/:$PATH \
     LANG=en_US.UTF-8 \
     PIP_NO_CACHE_DIR=off \
     LIBRARY_PATH=/lib:/usr/lib
-
-# Fix locale
-RUN localedef -i en_US -f UTF-8 en_US.UTF-8
 
 # Create a Python virtual environment for use by any application to avoid
 # potential conflicts with Python packages preinstalled in the main Python
@@ -111,8 +107,10 @@ RUN pip install virtualenv && \
 # </template>
 # <post>
 
-# Standardize on UID $USER
-RUN usermod -o -u $USER default
+# Standardize on UID $USER (alpine:3.4 does not have the shadow package)
+RUN apk add shadow --no-cache --repository http://rsync.alpinelinux.org/alpine/latest-stable/community/ && \
+    usermod -o -u $USER default && \
+    apk del shadow
 
 # Drop the root user and make the content of /opt/app-root owned by user default
 RUN chown -R $USER:0 /opt/app-root && chmod -R ug+rwx /opt/app-root
