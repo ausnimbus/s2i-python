@@ -86,12 +86,8 @@ The following ENV variables are made available:
 
 The versions currently supported are:
 
-- 2.7.13
-- 3.6.1
-
-## mod_wsgi
-
-mod_wsgi is currently not supported
+- 2.7
+- 3.6
 
 ## Variants
 
@@ -99,3 +95,5 @@ Two different variants are made available:
 
 - Default
 - Alpine
+  - mod_wsgi is not supported on the Alpine variant
+  - uwsgi is not supported on Python 2.7 Alpine variant
