@@ -58,6 +58,9 @@ CMD /usr/bin/base-usage
 
 RUN apk add --no-cache \
       wget \
+      libtool \
+      libc-dev \
+      linux-headers \
       # Dependenies for third-party Python packages
       # with C-extensions
       build-base \
