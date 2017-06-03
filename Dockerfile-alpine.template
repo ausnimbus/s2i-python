@@ -25,7 +25,9 @@ RUN apk add --no-cache \
       apache2 \
       apache2-dev && \
       apk add --no-cache --repository http://rsync.alpinelinux.org/alpine/latest-stable/community/ \
-      lapack-dev
+      lapack-dev && \
+      # Fix numpy
+      ln -s /usr/include/locale.h /usr/include/xlocale.h
 
 ENV PATH=$HOME/.local/bin/:$PATH \
     PYTHONUNBUFFERED=1 \
