@@ -1,11 +1,9 @@
-# Python S2I Builder
+# AusNimbus Builder for Python
 
 [![Build Status](https://travis-ci.org/ausnimbus/s2i-python.svg?branch=master)](https://travis-ci.org/ausnimbus/s2i-python)
 [![Docker Repository on Quay](https://quay.io/repository/ausnimbus/s2i-python/status "Docker Repository on Quay")](https://quay.io/repository/ausnimbus/s2i-python)
 
-This repository contains the source for the [source-to-image](https://github.com/openshift/source-to-image)
-builders used to deploy [Python applications](https://www.ausnimbus.com.au/languages/python/)
-on [AusNimbus](https://www.ausnimbus.com.au/).
+[AusNimbus](https://www.ausnimbus.com.au/) builder for Python provides a fast, secure and reliable [Python hosting](https://www.ausnimbus.com.au/languages/python-hosting/) environment.
 
 ## Environment variables
 ---------------------
