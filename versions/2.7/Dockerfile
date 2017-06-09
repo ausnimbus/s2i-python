@@ -20,6 +20,7 @@ USER 0
 
 RUN apt-get update && apt-get install -y \
       rsync nano vim && \
+    ln -sf /bin/bash /bin/sh && \
     mkdir -p $HOME && \
     useradd -u 1001 -g 0 -d $HOME -s /sbin/nologin \
       -c "Default Application User" default && \
@@ -35,7 +36,7 @@ COPY ./contrib/ /opt/app-root
 # </pre>
 # <s2i>
 
-RUN apt-get install -y git
+RUN apt-get update && apt-get install -y git --no-install-recommends && rm -rf /var/lib/apt/lists/*
 
 ENV STI_SCRIPTS_PATH=/usr/libexec/s2i
 

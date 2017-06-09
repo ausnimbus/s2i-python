@@ -12,10 +12,10 @@ node {
 
                   if (variants[v] == "default") {
                     variant = ""
-                    tag = versions[i]
+                    tag = "${versions[i]}"
                   } else {
                     variant = variants[v]
-                    tag = versions[i] + "-" + variant
+                    tag = "${versions[i]}-${variant}"
                   }
 
 
@@ -40,7 +40,7 @@ node {
                                                                         "name" : "${tag}",
                                                                         "from" : [
                                                                                 "kind" : "DockerImage",
-                                                                                "name" : "python:${tag}",
+                                                                                "name" : "python:${versions[i]}",
                                                                         ],
                                                                         "referencePolicy" : [
                                                                                 "type" : "Source"
@@ -81,7 +81,7 @@ node {
                                         "runPolicy" : "Serial",
                                         "resources" : [
                                             "limits" : [
-                                                "memory" : "2Gi"
+                                                "memory" : "2.5Gi"
                                             ]
                                         ],
                                         "source" : [
@@ -114,7 +114,7 @@ node {
         echo "==============================="
         def builds = openshift.startBuild("s2i-python-${tag}");
 
-        timeout(20) {
+        timeout(60) {
                 builds.untilEach(1) {
                         return it.object().status.phase == "Complete"
                 }
