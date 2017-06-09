@@ -4,7 +4,7 @@
 * DO NOT EDIT IT DIRECTLY.
 */
 node {
-        def variants = "default,alpine".split(',');
+        def variants = "default".split(',');
         for (int v = 0; v < variants.length; v++) {
 
                 def versions = "2.7,3.6".split(',');
@@ -40,7 +40,7 @@ node {
                                                                         "name" : "${tag}",
                                                                         "from" : [
                                                                                 "kind" : "DockerImage",
-                                                                                "name" : "python:${versions[i]}",
+                                                                                "name" : "python:${tag}",
                                                                         ],
                                                                         "referencePolicy" : [
                                                                                 "type" : "Source"
