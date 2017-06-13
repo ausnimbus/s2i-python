@@ -5,22 +5,25 @@
 
 [AusNimbus](https://www.ausnimbus.com.au/) builder for Python provides a fast, secure and reliable [Python hosting](https://www.ausnimbus.com.au/languages/python-hosting/) environment.
 
+This builder is optimized for web frameworks such as [Django](https://www.ausnimbus.com.au/apps/django/) and Flask.
+The recommended webserver is Gunicorn. Web processes must bind to port `8080`,
+and only the HTTP protocol is permitted for incoming connections.
+
+For your application to run you need to either have:
+
+  - Define the environment variable `APP_RUN` **or** `APP_MODULE` **or**
+  - Have a valid `wsgi.py` file for Gunicorn **or**
+  - Have a valid `app.py` file
+
 ## Environment variables
 ---------------------
 
 The following ENV variables are made available:
 
-* **APP_SCRIPT**
+* **APP_RUN**
 
-    Used to run the application from a script file.
-    This should be a path to a script file (defaults to `app.sh`) that will be
-    run to start the application.
-
-* **APP_FILE**
-
-    Used to run the application from a Python script.
-    This should be a path to a Python file (defaults to `app.py`) that will be
-    passed to the Python interpreter to start the application.
+    Used to define the application file to run. This should be a command to start the application. eg.
+    `python app.py` or `gunicorn myapp.wsgi --bind=0.0.0.0:8080 --forwarded-allow-ips="*" --access-logfile=-`
 
 * **APP_MODULE**
 
@@ -36,49 +39,52 @@ The following ENV variables are made available:
     file in your project and use it if it exists.
 
     If using `setup.py` for installing the application, the `MODULE_NAME` part
-    can be read from there. For an example, see
-    [setup-test-app](https://github.com/openshift/s2i-python/tree/master/3.5/test/setup-test-app).
+    can be read from there.
 
 * **APP_HOME**
 
     This variable can be used to specify a sub-directory in which the application to be run is contained.
     The directory pointed to by this variable needs to contain `wsgi.py` (for Gunicorn) or `manage.py` (for Django).
 
-    If `APP_HOME` is not provided, the `assemble` and `run` scripts will use the application's root
-    directory.
-
-* **APP_CONFIG**
-
-    Path to a valid Python file with a
-    [Gunicorn configuration](http://docs.gunicorn.org/en/latest/configure.html#configuration-file) file.
-
-* **DISABLE_COLLECTSTATIC**
-
-    Set this variable to a non-empty value to inhibit the execution of
-    'manage.py collectstatic' during the build. This only affects Django projects.
-
-* **DISABLE_MIGRATE**
-
-    Set this variable to a non-empty value to inhibit the execution of 'manage.py migrate'
-    when the produced image is run. This only affects Django projects.
+    If `APP_HOME` is not provided, the `assemble` and `run` scripts will use the application's root directory.
 
 * **PIP_INDEX_URL**
 
     Set this variable to use a custom index URL or mirror to download required packages
     during build process. This only affects packages listed in requirements.txt.
 
-* **UPGRADE_PIP_TO_LATEST**
+* **PIP_UPGRADE**
 
-    Set this variable to a non-empty value to have the 'pip' program be upgraded
+    Set this variable to TRUE to have the 'pip' program upgraded
     to the most recent version before any Python packages are installed. If not
     set it will use whatever the default version is included by the platform
     for the Python version being used.
+
+If you are using Gunicorn, you may use the following environment variables.
+
+* **APP_CONFIG**
+
+    Path to a valid Python file with a
+    [Gunicorn configuration](http://docs.gunicorn.org/en/latest/configure.html#configuration-file) file.
 
 * **WEB_CONCURRENCY**
 
     Set this to change the default setting for the number of
     [workers](http://docs.gunicorn.org/en/stable/settings.html#workers). By
-    default, this is set to the number of available cores times 2.
+    default, this is auto configured based on the `MEMORY_LIMIT`
+
+* **FORWARDED_ALLOW_IPS**
+
+    Set this to change Gunicorn's ForwardedAllowIPS setting. On [AusNimbus](https://www.ausnimbus.com.au/) your
+    application runs behind a loadbalancer, so by default, this is set to `*`
+    This ensures the correct client IP address is received by the application.
+
+If you are using [Django](https://www.ausnimbus.com.au/apps/django/), you may use the following environment variables.
+
+* **DISABLE_COLLECTSTATIC**
+
+    Set this variable to "TRUE" to disable the execution of
+    'manage.py collectstatic' during the build process.
 
 ## Versions
 

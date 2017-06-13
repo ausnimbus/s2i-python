@@ -1,0 +1,16 @@
+#!/bin/bash
+
+if [ $MEMORY_LIMIT -gt 4096 ]; then
+  export WEB_CONCURRENCY=${WEB_CONCURRENCY:-10}
+elif [ $MEMORY_LIMIT -gt 2048 ]; then
+  export WEB_CONCURRENCY=${WEB_CONCURRENCY:-8}
+elif [ $MEMORY_LIMIT -gt 1024 ]; then
+  export WEB_CONCURRENCY=${WEB_CONCURRENCY:-6}
+elif [ $MEMORY_LIMIT -gt 512 ]; then
+  export WEB_CONCURRENCY=${WEB_CONCURRENCY:-4}
+else
+  export WEB_CONCURRENCY=${WEB_CONCURRENCY:-2}
+fi
+
+export FORWARDED_ALLOW_IPS=${FORWARDED_ALLOW_IPS:-"*"}
+export GUNICORN_CMD_ARGS="--bind=0.0.0.0:8080 --access-logfile=-"

@@ -1,11 +1,10 @@
 #!/bin/bash -e
 source /opt/app-root/etc/python_environment
 
-shopt -s dotglob
 echo "---> Installing application source ..."
 mv /tmp/src/* ./
 
-if [[ ! -z "$UPGRADE_PIP_TO_LATEST" ]]; then
+if [[ "${PIP_UPGRADE:-"FALSE"}" == "TRUE" ]]; then
   echo "---> Upgrading pip to latest version ..."
   pip install -U pip
 fi
@@ -17,36 +16,20 @@ fi
 
 if [[ -f setup.py ]]; then
   echo "---> Installing application ..."
-  python setup.py develop
+  python setup.py install
 fi
 
-if should_collectstatic; then
-  (
+if django_installed && [[ "${DISABLE_COLLECTSTATIC:-"FALSE"}" == "FALSE" ]]; then
     echo "---> Collecting Django static files ..."
 
-
-    APP_HOME=${APP_HOME:-.}
-    # Look for 'manage.py' in the directory specified by APP_HOME, or the current directory
-    manage_file=$APP_HOME/manage.py
-
-    if [[ ! -f "$manage_file" ]]; then
+    if [[ ! -f "$APP_HOME/manage.py" ]]; then
       echo "WARNING: seems that you're using Django, but we could not find a 'manage.py' file."
       echo "'manage.py collectstatic' ignored."
       exit
     fi
 
-    if ! python $manage_file collectstatic --dry-run --noinput &> /dev/null; then
-      echo "WARNING: could not run 'manage.py collectstatic'. To debug, run:"
-      echo "    $ python $manage_file collectstatic --noinput"
-      echo "Ignore this warning if you're not serving static files with Django."
-      exit
-    fi
-
-    python $manage_file collectstatic --noinput
-  )
+    python "$APP_HOME/manage.py" collectstatic --noinput
 fi
 
-# Fix source directory permissions
-fix-permissions ./
-# set permissions for any installed artifacts
+# Fix directory permissions
 fix-permissions /opt/app-root
