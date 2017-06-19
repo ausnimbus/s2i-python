@@ -2,7 +2,9 @@
 
 [![Python](https://user-images.githubusercontent.com/2239920/27286437-7b386556-5543-11e7-8483-91ae1cdd7c53.jpg)](https://www.ausnimbus.com.au/)
 
-[AusNimbus](https://www.ausnimbus.com.au/) builder for Python provides a fast, secure and reliable Django, Flask and [Python hosting](https://www.ausnimbus.com.au/languages/python-hosting/) environment.
+The [AusNimbus](https://www.ausnimbus.com.au/) builder for Python provides a fast, secure and reliable Django, Flask and [Python hosting](https://www.ausnimbus.com.au/languages/python-hosting/) environment.
+
+It uses pip for dependency management.
 
 This builder is optimized for web frameworks such as [Django](https://www.ausnimbus.com.au/apps/django/) and Flask.
 The recommended webserver is Gunicorn. Web processes must bind to port `8080`,
