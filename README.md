@@ -1,9 +1,8 @@
-# AusNimbus Builder for Python
+# AusNimbus Builder for Python [![Build Status](https://travis-ci.org/ausnimbus/s2i-python.svg?branch=master)](https://travis-ci.org/ausnimbus/s2i-python) [![Docker Repository on Quay](https://quay.io/repository/ausnimbus/s2i-python/status "Docker Repository on Quay")](https://quay.io/repository/ausnimbus/s2i-python)
 
-[![Build Status](https://travis-ci.org/ausnimbus/s2i-python.svg?branch=master)](https://travis-ci.org/ausnimbus/s2i-python)
-[![Docker Repository on Quay](https://quay.io/repository/ausnimbus/s2i-python/status "Docker Repository on Quay")](https://quay.io/repository/ausnimbus/s2i-python)
+[![Python](https://user-images.githubusercontent.com/2239920/27286437-7b386556-5543-11e7-8483-91ae1cdd7c53.jpg)](https://www.ausnimbus.com.au/)
 
-[AusNimbus](https://www.ausnimbus.com.au/) builder for Python provides a fast, secure and reliable [Python hosting](https://www.ausnimbus.com.au/languages/python-hosting/) environment.
+[AusNimbus](https://www.ausnimbus.com.au/) builder for Python provides a fast, secure and reliable Django, Flask and [Python hosting](https://www.ausnimbus.com.au/languages/python-hosting/) environment.
 
 This builder is optimized for web frameworks such as [Django](https://www.ausnimbus.com.au/apps/django/) and Flask.
 The recommended webserver is Gunicorn. Web processes must bind to port `8080`,
@@ -16,9 +15,6 @@ For your application to run you need to either have:
   - Have a valid `app.py` file
 
 ## Environment variables
----------------------
-
-The following ENV variables are made available:
 
 * **APP_RUN**
 
@@ -92,12 +88,3 @@ The versions currently supported are:
 
 - 2.7
 - 3.6
-
-## Variants
-
-Two different variants are made available:
-
-- Default
-- Alpine
-  - mod_wsgi is not supported on the Alpine variant
-  - uwsgi is not supported on Python 2.7 Alpine variant
