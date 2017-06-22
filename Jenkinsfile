@@ -171,7 +171,7 @@ node {
         echo "Tag new image into staging"
         echo "==============================="
 
-        openshift.tag("ausnimbus-ci/s2i-python:${tag}", "ausnimbus/s2i-python:${tag}")
+        openshift.tag("ausnimbus-ci/s2i-python:${tag}", "ausnimbus-staging/s2i-python:${tag}")
 }
 
                                 }
