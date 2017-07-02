@@ -3,6 +3,7 @@ RUN apk add --no-cache \
       libtool \
       libc-dev \
       linux-headers \
+      findutils \
       # Dependenies for third-party Python packages
       # with C-extensions
       build-base \
