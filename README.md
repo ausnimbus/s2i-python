@@ -27,6 +27,7 @@ For your application to run you need to either have:
 
     Used to run the application with Gunicorn, as documented
     [here](http://docs.gunicorn.org/en/latest/run.html#gunicorn).
+    
     This variable specifies a WSGI callable with the pattern
     `MODULE_NAME:VARIABLE_NAME`, where `MODULE_NAME` is the full dotted path
     of a module, and `VARIABLE_NAME` refers to a WSGI callable inside the
@@ -44,8 +45,6 @@ For your application to run you need to either have:
     This variable can be used to specify a sub-directory in which the application to be run is contained.
     The directory pointed to by this variable needs to contain `wsgi.py` (for Gunicorn) or `manage.py` (for Django).
 
-    If `APP_HOME` is not provided, the `assemble` and `run` scripts will use the application's root directory.
-
 * **PIP_INDEX_URL**
 
     Set this variable to use a custom index URL or mirror to download required packages
@@ -60,9 +59,9 @@ For your application to run you need to either have:
 
 If you are using Gunicorn, you may use the following environment variables.
 
-* **APP_CONFIG**
+* **GUNICORN_CONFIG**
 
-    Path to a valid Python file with a
+    Optional path to your
     [Gunicorn configuration](http://docs.gunicorn.org/en/latest/configure.html#configuration-file) file.
 
 * **WEB_CONCURRENCY**

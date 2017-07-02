@@ -3,6 +3,7 @@ source cgroup-limits
 
 set -e
 set -o pipefail
+
 # Include hidden files
 shopt -s dotglob
 
@@ -12,7 +13,6 @@ umask 002
 
 # virtualenv
 source /opt/app-root/bin/activate
-
 
 function gunicorn_installed() {
   hash gunicorn &>/dev/null
