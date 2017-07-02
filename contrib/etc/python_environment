@@ -21,5 +21,3 @@ function gunicorn_installed() {
 function django_installed() {
   python -c "import django" &>/dev/null
 }
-
-export APP_HOME=${APP_HOME:-.}

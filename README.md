@@ -7,12 +7,11 @@ The [AusNimbus](https://www.ausnimbus.com.au/) builder for Python provides a fas
 It uses pip for dependency management.
 
 This builder is optimized for web frameworks such as [Django](https://www.ausnimbus.com.au/apps/django/) and Flask.
-The recommended webserver is Gunicorn. Web processes must bind to port `8080`,
-and only the HTTP protocol is permitted for incoming connections.
+The recommended webserver is Gunicorn. Web processes must bind to port `8080` and only the HTTP protocol is permitted for incoming connections.
 
 For your application to run you need to either have:
 
-  - Define the environment variable `APP_RUN` **or** `APP_MODULE` **or**
+  - Define the environment variable `APP_RUN` **or** `GUNICORN_APP_MODULE` **or**
   - Have a valid `wsgi.py` file for Gunicorn **or**
   - Have a valid `app.py` file
 
@@ -20,35 +19,13 @@ For your application to run you need to either have:
 
 * **APP_RUN**
 
-    Used to define the application file to run. This should be a command to start the application. eg.
-    `python app.py` or `gunicorn myapp.wsgi --bind=0.0.0.0:8080 --forwarded-allow-ips="*" --access-logfile=-`
+    Define the application command to be run. This can be a command to start the application.
 
-* **APP_MODULE**
-
-    Used to run the application with Gunicorn, as documented
-    [here](http://docs.gunicorn.org/en/latest/run.html#gunicorn).
-    
-    This variable specifies a WSGI callable with the pattern
-    `MODULE_NAME:VARIABLE_NAME`, where `MODULE_NAME` is the full dotted path
-    of a module, and `VARIABLE_NAME` refers to a WSGI callable inside the
-    specified module.
-    Gunicorn will look for a WSGI callable named `application` if not specified.
-
-    If `APP_MODULE` is not provided, the `run` script will look for a `wsgi.py`
-    file in your project and use it if it exists.
-
-    If using `setup.py` for installing the application, the `MODULE_NAME` part
-    can be read from there.
-
-* **APP_HOME**
-
-    This variable can be used to specify a sub-directory in which the application to be run is contained.
-    The directory pointed to by this variable needs to contain `wsgi.py` (for Gunicorn) or `manage.py` (for Django).
+    **NOTE:** This overwrites any builder dynamic run configuration.
 
 * **PIP_INDEX_URL**
 
-    Set this variable to use a custom index URL or mirror to download required packages
-    during build process. This only affects packages listed in requirements.txt.
+    Set this variable to use a custom index URL or mirror to download required packages during build process. This only affects packages listed in requirements.txt.
 
 * **PIP_UPGRADE**
 
@@ -58,6 +35,20 @@ For your application to run you need to either have:
     for the Python version being used.
 
 If you are using Gunicorn, you may use the following environment variables.
+
+* **GUNICORN_APP_MODULE**
+
+    Used to run the application with [Gunicorn](http://docs.gunicorn.org/en/latest/run.html#gunicorn)
+
+    This variable specifies a WSGI callable with the pattern
+    `MODULE_NAME:VARIABLE_NAME`, where `MODULE_NAME` is the full dotted path
+    of a module, and `VARIABLE_NAME` refers to a WSGI callable inside the
+    specified module. Gunicorn will look for a WSGI callable named `application` if not specified.
+
+    If `GUNICORN_APP_MODULE` is not provided:
+
+    The builder will attempt to look for a `wsgi.py` file in your project and use it if it exists.
+    If you are using `setup.py` for installing the application, the `MODULE_NAME` part can be read from there.
 
 * **GUNICORN_CONFIG**
 
@@ -80,8 +71,19 @@ If you are using [Django](https://www.ausnimbus.com.au/apps/django/), you may us
 
 * **DISABLE_COLLECTSTATIC**
 
-    Set this variable to "TRUE" to disable the execution of
-    'manage.py collectstatic' during the build process.
+    Set this variable to "TRUE" to disable the execution of 'manage.py collectstatic' during the build process.
+
+## Traditional Applications
+
+If your Python application contains a `setup.py` file but excludes a `requirements.txt`. `python setup.py develop`
+will be used to install your application and dependencies.
+
+If you have a `requirements.txt` file but would like to run `python setup.py develop`,
+you can add the following to your `requirements.txt` file:
+
+```
+-e .
+```
 
 ## Versions
 

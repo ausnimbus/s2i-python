@@ -14,26 +14,22 @@ if [[ "${PIP_UPGRADE:-"FALSE"}" == "TRUE" ]]; then
   pip install -U pip
 fi
 
-if [[ -f requirements.txt ]]; then
-  echo "---> Installing dependencies ..."
-  pip install -r requirements.txt
+# If no requirements.txt file given, assume `setup.py develop` is intended.
+if [ ! -f requirements.txt ] && [ -f 'setup.py' ]; then
+  echo "-e ." > requirements.txt
 fi
 
-if [[ -f setup.py ]]; then
-  echo "---> Installing application ..."
-  python setup.py install
-fi
+echo "---> Installing application ..."
+pip install -r requirements.txt
 
 if django_installed && [[ "${DISABLE_COLLECTSTATIC:-"FALSE"}" == "FALSE" ]]; then
-    echo "---> Collecting Django static files ..."
+    MANAGE_FILE=$(find . -maxdepth 3 -type f -name 'manage.py' -printf '%d\t%P\n' | sort -nk1 | cut -f2 | head -1)
+    MANAGE_FILE=${MANAGE_FILE:-}
 
-    if [[ ! -f "$APP_HOME/manage.py" ]]; then
-      echo "WARNING: seems that you're using Django, but we could not find a 'manage.py' file."
-      echo "'manage.py collectstatic' ignored."
-      exit
+    if [ -f "$MANAGE_FILE" ]; then
+      echo "---> Collecting Django static files ..."
+      python "$MANAGE_FILE" collectstatic --noinput
     fi
-
-    python "$APP_HOME/manage.py" collectstatic --noinput
 fi
 
 # Fix directory permissions

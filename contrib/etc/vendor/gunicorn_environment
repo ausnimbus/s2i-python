@@ -14,3 +14,13 @@ fi
 
 export FORWARDED_ALLOW_IPS=${FORWARDED_ALLOW_IPS:-"*"}
 export GUNICORN_CMD_ARGS="--bind=0.0.0.0:8080 --access-logfile=-"
+
+# Attempt to get the GUNICORN_APP_MODULE
+if [[ -z "$GUNICORN_APP_MODULE" ]]; then
+  # Replace all "/" with ".", remove leading "." and ".py" suffix
+  GUNICORN_APP_MODULE=$(find . -maxdepth 1 -type f -name 'wsgi.py' | sed 's:/:.:g;s:^\.\+::;s:\.py$::')
+fi
+
+if [[ -z "$GUNICORN_APP_MODULE" && -f setup.py ]]; then
+  GUNICORN_APP_MODULE="$(python setup.py --name)"
+fi

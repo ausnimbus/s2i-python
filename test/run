@@ -14,12 +14,12 @@ S2I_ARGS=${S2I_ARGS:-""}
 if [ $VARIANT == "alpine" ]; then
   # uwsgi does not work on alpine 2.7
   if [ $VERSION == "2.7" ]; then
-    TEST_APPS=({standalone,setup,django,numpy,app-home,locale})
+    TEST_APPS=({standalone,setup,django,numpy,locale})
   else
-    TEST_APPS=({standalone,setup,django,numpy,app-home,uwsgi,locale})
+    TEST_APPS=({standalone,setup,django,numpy,uwsgi,locale})
   fi
 else
-  TEST_APPS=({standalone,setup,django,numpy,app-home,uwsgi,locale,mod-wsgi})
+  TEST_APPS=({standalone,setup,django,numpy,uwsgi,locale,mod-wsgi})
 fi
 
 VERSION_COMMAND='env'

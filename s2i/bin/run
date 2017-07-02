@@ -1,38 +1,27 @@
 #!/bin/bash -e
 source /opt/app-root/etc/python_environment
 
-# App run (eg. python app.py)
+# APP_RUN defined (eg. python app.py)
 if [[ -n "$APP_RUN" ]]; then
   echo "---> Running application from ($APP_RUN) ..."
   eval bash -c "$APP_RUN"
-fi
 
 # Gunicorn
-if gunicorn_installed; then
+elif gunicorn_installed; then
   source /opt/app-root/etc/vendor/gunicorn_environment
 
-  if [[ -z "$APP_MODULE" ]]; then
-    # Look only in the directory specified by APP_HOME, or the current directory
-    # replace all "/" with ".", remove leading "." and ".py" suffix
-    APP_MODULE=$(find $APP_HOME -maxdepth 1 -type f -name 'wsgi.py' | sed 's:/:.:g;s:^\.\+::;s:\.py$::')
+  if [[ "$GUNICORN_APP_MODULE" ]]; then
+    echo "---> Serving application with gunicorn ($GUNICORN_APP_MODULE) ..."
+    exec gunicorn "$GUNICORN_APP_MODULE" --config "$APP_CONFIG"
   fi
-
-  if [[ -z "$APP_MODULE" && -f setup.py ]]; then
-    APP_MODULE="$(python setup.py --name)"
-  fi
-
-  if [[ "$APP_MODULE" ]]; then
-    echo "---> Serving application with gunicorn ($APP_MODULE) ..."
-    exec gunicorn "$APP_MODULE" --config "$APP_CONFIG"
-  fi
-fi
 
 # Fallback (app.py file)
-if [[ -f "app.py" ]]; then
+elif [[ -f "app.py" ]]; then
   echo "---> Running application from (python app.py) ..."
   exec python app.py
-fi
 
-echo "ERROR: don't know how to run your application."
-echo "Please set either APP_MODULE, APP_RUN environment variables or have the file app.py to launch your application."
-exit 1
+else
+  echo "ERROR: don't know how to run your application."
+  echo "Please set either GUNICORN_APP_MODULE, APP_RUN environment variables or have the file app.py to launch your application."
+  exit 1
+fi
