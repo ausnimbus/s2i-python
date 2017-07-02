@@ -5,18 +5,20 @@ source /opt/app-root/etc/python_environment
 if [[ -n "$APP_RUN" ]]; then
   echo "---> Running application from ($APP_RUN) ..."
   eval bash -c "$APP_RUN"
+fi
 
 # Gunicorn
-elif gunicorn_installed; then
+if gunicorn_installed; then
   source /opt/app-root/etc/vendor/gunicorn_environment
 
   if [[ "$GUNICORN_APP_MODULE" ]]; then
     echo "---> Serving application with gunicorn ($GUNICORN_APP_MODULE) ..."
     exec gunicorn "$GUNICORN_APP_MODULE" --config "$APP_CONFIG"
   fi
+fi
 
 # Fallback (app.py file)
-elif [[ -f "app.py" ]]; then
+if [[ -f "app.py" ]]; then
   echo "---> Running application from (python app.py) ..."
   exec python app.py
 
