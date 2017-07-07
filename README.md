@@ -6,6 +6,28 @@ The [AusNimbus](https://www.ausnimbus.com.au/) builder for Python provides a fas
 
 This document describes the behaviour and environment configuration when running your Python apps on AusNimbus.
 
+## Table of Contents
+
+- [Runtime Environments](#runtime-environments)
+- [Web Process](#web-process)
+- [Dependency Management](#dependency-management)
+- [Advanced](#advanced)
+  - [Build Customization](#build-customization)
+    - [Configuring pip](#configuring-pip)
+  - [Using Gunicorn](#using-gunicorn)
+    - [Configuring Gunicorn](#configuring-gunicorn)
+    - [Application Concurrency](#application-concurrency)
+    - [Forwarded Allow IPs](#forwarded-allow-ips)
+  - [Using Django](#using-django)
+    - [Serving static files](#serving-static-files)
+    - [Disabling Collectstatic](#disabling-collectstatic)
+- [Extending](#extending)
+  - [Build Stage (assemble)](#build-stage-assemble)
+  - [Runtime Stage (run)](#runtime-stage-run)
+  - [Persistent Environment Variables](#persistent-environment-variables)
+- [Debug Mode](#debug-mode)
+- [Troubleshooting](#Troubleshooting)
+
 ## Runtime Environments
 
 AusNimbus supports the major Python versions.
@@ -75,7 +97,7 @@ NAME                    | Description
 GUNICORN_APP_MODULE     | This variable specifies a WSGI callable with the pattern
 `MODULE_NAME:VARIABLE_NAME`
 
-### Configuring Gunicorn
+#### Configuring Gunicorn
 
 The builder provides a standard Gunicorn configuration however you may alternatively specify another location for your Gunicorn config:
 
@@ -119,7 +141,7 @@ FORWARDED_ALLOW_IPS  | Set this to change Gunicorn's ForwardedAllowIPS setting. 
 
 Django does not support serving static files in production. Instead it is recommended to integrate the [WhiteNoise](http://whitenoise.evans.io/en/stable/) package into your Django application.
 
-### Disabling Collectstatic
+#### Disabling Collectstatic
 
 Django applications on AusNimbus automatically have `python manage.py collectstatic --noinput` run during the build stage.
 
