@@ -3,7 +3,7 @@
 NAME="python"
 DISPLAY_NAME="Python"
 TYPE="s2i"
-VARIANTS=${VARIANTS:-"default,alpine"}
+VARIANTS=${VARIANTS:-"default"}
 VERSIONS=${VERSIONS:-"2.7,3.6"}
 
 DOCKER_PUSH=${DOCKER_PUSH:-"false"}
