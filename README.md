@@ -94,8 +94,7 @@ The auto detection may be undesirable, so it is recommended you set the followin
 
 NAME                    | Description
 ------------------------|-------------
-GUNICORN_APP_MODULE     | This variable specifies a WSGI callable with the pattern
-`MODULE_NAME:VARIABLE_NAME`
+GUNICORN_APP_MODULE     | This variable specifies a WSGI callable with the pattern `MODULE_NAME:VARIABLE_NAME`
 
 #### Configuring Gunicorn
 
@@ -103,8 +102,7 @@ The builder provides a standard Gunicorn configuration however you may alternati
 
 Name            | Description
 ----------------|-------------
-GUNICORN_CONFIG | Path to your
-[Gunicorn configuration](http://docs.gunicorn.org/en/latest/configure.html#configuration-file) file.
+GUNICORN_CONFIG | Path to your [Gunicorn configuration](http://docs.gunicorn.org/en/latest/configure.html#configuration-file) file.
 
 #### Application Concurrency
 
