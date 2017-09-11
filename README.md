@@ -69,7 +69,7 @@ By default `pip` will be executed with the version packaged in the current build
 
 NAME          | Description
 --------------|-------------
-PIP_UPGRADE   | Set to TRUE to upgrade pip before installing dependencies
+PIP_UPGRADE   | Set to TRUE to upgrade pip, setuptools and wheel before installing dependencies
 
 If you would like to use a custom pip mirror you may use the following environment variable:
 

@@ -11,7 +11,7 @@ mv /tmp/src/* ./
 
 if [[ "${PIP_UPGRADE:-"FALSE"}" == "TRUE" ]]; then
   echo "---> Upgrading pip to latest version ..."
-  pip install -U pip
+  pip install -U pip setuptools wheel
 fi
 
 # If no requirements.txt file given, assume `setup.py develop` is intended.
